@@ -1,34 +1,55 @@
 <?php
-// controllers/LoginController.php
+require_once 'models/usuario.php';
+require_once 'DAO/usuarioDAO.php';
 
-session_start();
+class LoginController
+{
+    private $userDAO;
 
-require_once '../config/database.php';
-require_once '../models/Usuario.php';
-
-$usuarioModel = new Usuario($conn);
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Obtener los datos del formulario
-    $username = $_POST['username'];
-    $password = $_POST['password'];
-
-    // Verificar las credenciales
-    $usuario = $usuarioModel->getByUsername($username);
-    if ($usuario && $password === $usuario['password']) {
-        // Inicio de sesión exitoso
-        $_SESSION['username'] = $username;
-        // Redirigir a la página principal o a donde sea necesario
-        header('Location: ../index.php');
-        exit();
-    } else {
-        // Credenciales incorrectas, redirigir de vuelta al formulario de inicio de sesión con mensaje de error
-        header('Location: ../views/login.php?error=1');
-        exit();
+    public function __construct()
+    {
+        $this->userDAO = new UsuarioDAO();
     }
-} else {
-    // Manejo de métodos HTTP no permitidos
-    header('HTTP/1.1 405 Method Not Allowed');
-    exit();
+
+    public function index()
+    {
+        require_once 'views/login/index.php';
+    }
+
+    public function submit()
+    {
+        /*echo "
+        <script>
+        console.log('Si estamos aqui');
+        </script>
+        ";
+        echo "Request method: " . $_SERVER['REQUEST_METHOD'];*/
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $usuario = $_POST['usuario'];
+            $password = $_POST['password'];
+            $user = $this->userDAO->getByUsuario($usuario);
+            if ($usuario != null && password_verify($password, $user->getPassword())) {
+                session_start();
+                $_SESSION['username'] = $usuario;
+                header("Location:  /nine/wiews/principal/index.php");
+                exit;
+            } else {
+                header('Location: /nine?fail=true');
+            }
+        } else {
+            echo "
+            <script>
+            console.log('algo fallo');
+            </script>
+            ";
+        }
+    }
+    public function logout()
+    {
+        session_start();
+        session_unset();
+        session_destroy();
+        header('Location: /nine');
+        exit;
+    }
 }
-?>

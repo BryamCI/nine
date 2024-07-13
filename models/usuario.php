@@ -1,21 +1,51 @@
 <?php
-// models/Usuario.php
-
 class Usuario {
-    private $conn;
+    private $idUsuario;
+    private $nombre;
+    private $password;
+    private $rol; // Objeto RolUsuario
 
-    public function __construct($db) {
-        $this->conn = $db;
+    public function __construct($idUsuario, $nombre, $password, $rol) {
+        $this->idUsuario = $idUsuario;
+        $this->nombre = $nombre;
+        $this->password = $password;
+        $this->rol = $rol;
     }
 
-    // Función para obtener un usuario por su nombre de usuario
-    public function getByUsername($username) {
-        $query = "SELECT * FROM usuario WHERE nombre = ?";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bind_param('s', $username);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        return $result->fetch_assoc();
+    public function getIdUsuario() {
+        return $this->idUsuario;
+    }
+
+    public function getNombre() {
+        return $this->nombre;
+    }
+
+    public function getPassword() {
+        return $this->password;
+    }
+
+    public function getRol() {
+        return $this->rol;
+    }
+
+    public function setIdusuario($idusuario)
+    {
+        $this->idusuario = $idusuario;
+    }
+
+    public function setNombre($nombre)
+    {
+        $this->nombre = $nombre;
+    }
+
+    public function setPassword($password)
+    {
+        $this->password = $password;
+    }
+
+    public function setEstado($estado)
+    {
+        $this->estado = $estado;
     }
 }
 ?>
